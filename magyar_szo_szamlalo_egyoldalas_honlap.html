@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Heurisztikus Hangok Halmaza</title>
+  <style>
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;max-width:900px;margin:24px auto;padding:12px}
+    h1{font-size:1.4rem}
+    label{display:block;margin-top:12px}
+    input,button{font-size:1rem;padding:8px;margin-top:6px;width:100%;box-sizing:border-box}
+    .row{display:flex;gap:12px}
+    .col{flex:1}
+    .results{margin-top:12px;padding:12px;background:#f6f6f8;border-radius:8px}
+    .small{font-size:0.9rem;color:#555}
+    .actions{display:flex;gap:8px;margin-top:8px}
+    .hint{font-size:0.85rem;color:#666;margin-top:6px}
+  </style>
+</head>
+<body>
+  <h1>Heurisztikus Hangok Halmaza</h1>
+  <p class="small">Írd be a magyar betűt (pl. <code>a</code>, <code>á</code>, <code>cs</code>, <code>dzs</code>) és egy számot — a weboldal megszámolja, hogy a szótárban hány szó kezdődik ezzel a betűvel, és hány szóban áll a megadott pozíción.</p>
+
+  <label>Betű / betűsor:</label>
+  <input id="letterInput" maxlength="10" placeholder="Írd be a magyar betűt vagy betűsorozatot" />
+
+  <div class="row">
+    <div class="col">
+      <label>Pozíció (1-alapú):</label>
+      <input id="posInput" type="number" min="1" placeholder="Pl. 4" />
+    </div>
+  </div>
+
+  <div class="actions">
+    <button id="countBtn">Számolás</button>
+  </div>
+
+  <div class="results" id="results" hidden>
+    <strong>Eredmény</strong>
+    <div id="summary"></div>
+    <div class="hint">Megjegyzés: mindig a magyar ABC szerint számol, digráfokat/trigráfot egy betűnek tekintjük (cs, dzs, gy, stb.).</div>
+    <hr />
+    <div><strong>Példaszó az adott kezdőbetűvel:</strong> <span id="randomStart"></span></div>
+    <div><strong>Példaszó a pozícióban:</strong> <span id="randomMatch"></span></div>
+  </div>
+
+  <script>
+    const HUNGARIAN_GRAPHEMES = ['dzs','dz','cs','gy','ly','ny','sz','ty','zs'];
+
+    function splitToGraphemes(s){
+      s = s.toLowerCase();
+      const out = [];
+      for(let i=0;i<s.length;){
+        let matched = false;
+        for(const g of HUNGARIAN_GRAPHEMES){
+          if(s.startsWith(g,i)){ out.push(g); i+=g.length; matched=true; break; }
+        }
+        if(!matched){ out.push(s[i]); i++; }
+      }
+      return out;
+    }
+
+    function normalizeWord(w){ return w.replace(/\uFEFF/g,'').trim().toLowerCase(); }
+
+    let dictionary = [];
+    fetch('https://gist.githubusercontent.com/Konstantinusz/f9517357e46fa827c3736031ac8d01c7/raw/fc98429a6357d1c4fcc644e1b70c2431bd046cf0/magyar-szavak.txt')
+      .then(r=>r.text())
+      .then(txt=>{ dictionary = txt.split(/\r?\n/).map(normalizeWord).filter(Boolean); });
+
+    document.getElementById('countBtn').addEventListener('click',()=>{
+      const letterRaw = document.getElementById('letterInput').value.trim().toLowerCase();
+      const posRaw = parseInt(document.getElementById('posInput').value,10);
+      if(!letterRaw){ alert('Adj meg egy betűt vagy betűsort.'); return; }
+      if(isNaN(posRaw) || posRaw<1){ alert('Adj meg egy érvényes pozíciót.'); return; }
+
+      let startsCount = 0;
+      const posMatches = [];
+      const startMatches = [];
+
+      for(const w of dictionary){
+        const grap = splitToGraphemes(w);
+        // kezdőbetű
+        if(grap.slice(0,splitToGraphemes(letterRaw).length).join('')===letterRaw) { startsCount++; startMatches.push(w); }
+        // pozíció
+        if(grap.length>=posRaw && grap[posRaw-1]===letterRaw) posMatches.push(w);
+      }
+
+      document.getElementById('results').hidden=false;
+      document.getElementById('summary').innerHTML=`A szótárban <strong>${startsCount}</strong> szó kezdődik azzal, hogy "${letterRaw}".<br>És <strong>${posMatches.length}</strong> olyan szó van, ahol a(z) ${posRaw}. helyen pontosan "${letterRaw}" szerepel.`;
+      // random szó a pozícióban
+      document.getElementById('randomMatch').textContent=posMatches.length>0?posMatches[Math.floor(Math.random()*posMatches.length)]:'(nincs találat)';
+      // random szó az adott kezdőbetűvel
+      document.getElementById('randomStart').textContent=startMatches.length>0?startMatches[Math.floor(Math.random()*startMatches.length)]:'(nincs találat)';
+    });
+  </script>
+</body>
+</html>
