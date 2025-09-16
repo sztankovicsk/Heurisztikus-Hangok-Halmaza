@@ -84,7 +84,7 @@ if(grap.length>=posRaw && grap[posRaw-1]===letterRaw) posMatches.push(w);
 }
 
 document.getElementById('results').hidden=false;
-document.getElementById('summary').innerHTML=`A szótárban <strong>${startsCount}</strong> szó kezdődik azzal, hogy "${letterRaw}".<br>És <strong>${posMatches.length}</strong> olyan szó van, ahol a(z) ${posRaw}. helyen pontosan "${letterRaw}" szerepel.`;
+document.getElementById('summary').innerHTML=`A szótárban <strong>${startsCount}</strong> szó kezdődik "${letterRaw}" betűvel.<br>És <strong>${posMatches.length}</strong> olyan szó van, ahol a(z) ${posRaw}. helyen "${letterRaw}" szerepel.`;
 document.getElementById('randomMatch').textContent=posMatches.length>0?posMatches[Math.floor(Math.random()*posMatches.length)]:'(nincs találat)';
 document.getElementById('randomStart').textContent=startMatches.length>0?startMatches[Math.floor(Math.random()*startMatches.length)]:'(nincs találat)';
 });
