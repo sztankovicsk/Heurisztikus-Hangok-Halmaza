@@ -19,14 +19,14 @@
 </head>
 <body>
   <h1>Heurisztikus Hangok Halmaza</h1>
-  <p class="small">Írd be a magyar betűt (pl. <code>a</code>, <code>á</code>, <code>cs</code>, <code>dzs</code>) és egy számot — a weboldal megszámolja, hogy a szótárban hány szó kezdődik ezzel a betűvel, és hány szóban áll a megadott pozíción.</p>
+  <p class="small">Írd be egy betűt (pl. <code>a</code>, <code>á</code>, <code>cs</code>, <code>dzs</code>) és egy számot — a weboldal megszámolja, hogy a szótárban hány szó kezdődik ezzel a betűvel, és hány szóban áll a megadott pozíción.</p>
 
   <label>Betű / betűsor:</label>
   <input id="letterInput" maxlength="10" placeholder="Írd be a magyar betűt vagy betűsorozatot" />
 
   <div class="row">
     <div class="col">
-      <label>Pozíció (1-alapú):</label>
+      <label>Pozíció:</label>
       <input id="posInput" type="number" min="1" placeholder="Pl. 4" />
     </div>
   </div>
@@ -41,7 +41,7 @@
     <div class="hint">Megjegyzés: mindig a magyar ABC szerint számol, digráfokat/trigráfot egy betűnek tekintjük (cs, dzs, gy, stb.).</div>
     <hr />
     <div><strong>Példaszó az adott kezdőbetűvel:</strong> <span id="randomStart"></span></div>
-    <div><strong>Példaszó a pozícióban:</strong> <span id="randomMatch"></span></div>
+    <div><strong>Példaszó az adott betű pozícióban:</strong> <span id="randomMatch"></span></div>
   </div>
 
   <script>
