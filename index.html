@@ -70,7 +70,7 @@
     document.getElementById('countBtn').addEventListener('click',()=>{
       const letterRaw = document.getElementById('letterInput').value.trim().toLowerCase();
       const posRaw = parseInt(document.getElementById('posInput').value,10);
-      if(!letterRaw){ alert('Adj meg egy betűt vagy betűsort.'); return; }
+      if(!letterRaw){ alert('Adj meg egy betűt.'); return; }
       if(isNaN(posRaw) || posRaw<1){ alert('Adj meg egy érvényes pozíciót.'); return; }
 
       let startsCount = 0;
